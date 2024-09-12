@@ -54,9 +54,6 @@
             <label for="subcategories">Subcategories:</label>
             <select id="subcategories" name="subcategories[]" multiple>
                 <!-- Options will be dynamically loaded here -->
-                @foreach ($subCategories as $subcategory)
-                    <option value="{{ $subcategory->id }}" data-parent="{{ $subcategory->parent_id }}">{{ $subcategory->name }}</option>
-                @endforeach
             </select>
         </div>
 
@@ -64,24 +61,31 @@
     </form>
 
     <script>
-        $(document).ready(function() {
-            $('#parent_category').change(function() {
-                var parentId = $(this).val();
-                $('#subcategories').empty(); // Clear previous options
+        document.addEventListener('DOMContentLoaded', function () {
+            // Convert server-side subcategories to JavaScript object
+            const subcategories = @json($subCategories);
 
-                // Add back the options if no parent category is selected
-                @foreach ($subCategories as $subcategory)
-                    if (parentId === "{{ $subcategory->parent_id }}") {
-                        $('#subcategories').append(
-                            $('<option>', {
-                                value: "{{ $subcategory->id }}",
-                                text: "{{ $subcategory->name }}"
-                            })
-                        );
+            // Convert object to array
+            const subcategoriesArray = Object.values(subcategories);
+
+            const parentCategorySelect = document.getElementById('parent_category');
+            const subcategorySelect = document.getElementById('subcategories');
+
+            parentCategorySelect.addEventListener('change', function () {
+                const parentId = this.value;
+                // Clear previous options
+                subcategorySelect.innerHTML = '';
+
+                subcategoriesArray.forEach(function (subcategory) {
+                    if (subcategory.parent_id == parentId || parentId === '') {
+                        const option = document.createElement('option');
+                        option.value = subcategory.id;
+                        option.textContent = subcategory.name;
+                        subcategorySelect.appendChild(option);
                     }
-                @endforeach
+                });
             });
         });
     </script>
-</div>
+    </div>
 @endsection

@@ -12,6 +12,7 @@
                 <th>Price</th>
                 <th>Parent Category</th>
                 <th>Subcategory</th>
+                <th>Image</th>
             </tr>
         </thead>
         <tbody>
@@ -33,7 +34,14 @@
                             @if ($category->parent_id)
                                 {{ $category->name }}
                             @else
-                            null
+                                null
+                            @endif
+                        </td>
+                        <td>
+                            @if ($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="width: 100px; height: auto;">
+                            @else
+                                No Image
                             @endif
                         </td>
                     </tr>
