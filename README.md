@@ -27,5 +27,5 @@ A simple full-stack application for managing products and categories built with 
 
 <h3>How to Test</h3>
     <ul>Run Tests:</ul>
-        <li>Set .env.testing file for testing .env configuration.</li>
+        <li>Set .env.testing file for testing .env configuration and use same .env method to generate the key.</li>
         <li>Run php artisan test to execute the automated tests for the backend.</li>
