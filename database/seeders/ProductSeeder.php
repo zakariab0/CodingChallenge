@@ -12,7 +12,7 @@ class ProductSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        // Create some products
+        // Create products
         for ($i = 0; $i < 10; $i++) {
             $product = Product::create([
                 'name' => $faker->word,
@@ -21,7 +21,7 @@ class ProductSeeder extends Seeder
                 'image' => 'images/' . $faker->image('public/images', 640, 480, null, false)
             ]);
 
-            // Attach categories to products
+            // insert categories to products
             $categories = Category::inRandomOrder()->take(rand(1, 3))->pluck('id');
             $product->categories()->attach($categories);
         }

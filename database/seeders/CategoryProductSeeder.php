@@ -8,6 +8,7 @@ use App\Models\Category;
 
 class CategoryProductSeeder extends Seeder
 {
+    //manual seeding
     public function run()
     {
         $product = Product::find(3);

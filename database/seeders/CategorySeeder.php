@@ -12,14 +12,14 @@ class CategorySeeder extends Seeder
     {
         $faker = Faker::create();
 
-        // Create some parent categories
+        // Create parent categories
         for ($i = 0; $i < 5; $i++) {
             $parentCategory = Category::create([
                 'name' => $faker->word,
                 'parent_id' => null
             ]);
 
-            // Create some child categories
+            // Create child categories
             for ($j = 0; $j < 3; $j++) {
                 Category::create([
                     'name' => $faker->word,

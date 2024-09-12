@@ -1,53 +1,38 @@
 @extends('layout')
 
 @section('content')
-<div>
+<div class="container mt-4">
     <h1>Product List</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Parent Category</th>
-                <th>Subcategory</th>
-                <th>Image</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($products as $product)
-                @foreach ($product->categories as $category)
-                    <tr>
-                        <td>{{ $product->id }}</td>
-                        <td>{{ $product->name }}</td>
-                        <td>{{ $product->description }}</td>
-                        <td>${{ number_format($product->price, 2) }}</td>
-                        <td>
-                            @if ($category->parent_id)
-                                {{ $category->parent ? $category->parent->name : 'No Parent' }}
-                            @else
-                                {{ $category->name }}
-                            @endif
-                        </td>
-                        <td>
-                            @if ($category->parent_id)
-                                {{ $category->name }}
-                            @else
-                                null
-                            @endif
-                        </td>
-                        <td>
-                            @if ($product->image)
-                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="width: 100px; height: auto;">
-                            @else
-                                No Image
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
+    <div class="row">
+        @foreach ($products as $product)
+            @foreach ($product->categories as $category)
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/150' }}" class="card-img-top" alt="{{ $product->name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $product->name }}</h5>
+                            <p class="card-text">
+                                <strong>Description:</strong> {{ $product->description }}<br>
+                                <strong>Price:</strong> ${{ number_format($product->price, 2) }}<br>
+                                <strong>Parent Category:</strong>
+                                @if ($category->parent_id)
+                                    {{ $category->parent ? $category->parent->name : 'No Parent' }}
+                                @else
+                                    {{ $category->name }}
+                                @endif
+                                <br>
+                                <strong>Subcategory:</strong>
+                                @if ($category->parent_id)
+                                    {{ $category->name }}
+                                @else
+                                    null
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                </div>
             @endforeach
-        </tbody>
-    </table>
+        @endforeach
+    </div>
 </div>
 @endsection

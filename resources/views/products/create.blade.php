@@ -1,47 +1,48 @@
 @extends('layout')
 
 @section('content')
-<div>
+<div class="container mt-4">
     <h1>Create Product</h1>
 
     <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <div>
+
+        <div class="form-group">
             <label for="name">Name:</label>
-            <input type="text" id="name" name="name" value="{{ old('name') }}" required>
+            <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required>
             @error('name')
-                <span>{{ $message }}</span>
+                <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
 
-        <div>
+        <div class="form-group">
             <label for="description">Description:</label>
-            <textarea id="description" name="description" required>{{ old('description') }}</textarea>
+            <textarea id="description" name="description" class="form-control" required>{{ old('description') }}</textarea>
             @error('description')
-                <span>{{ $message }}</span>
+                <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
 
-        <div>
+        <div class="form-group">
             <label for="price">Price:</label>
-            <input type="number" id="price" name="price" step="0.01" value="{{ old('price') }}" required>
+            <input type="number" id="price" name="price" class="form-control" step="0.01" value="{{ old('price') }}" required>
             @error('price')
-                <span>{{ $message }}</span>
+                <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
 
-        <div>
+        <div class="form-group">
             <label for="image">Image:</label>
-            <input type="file" id="image" name="image">
+            <input type="file" id="image" name="image" class="form-control-file">
             @error('image')
-                <span>{{ $message }}</span>
+                <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
 
-        <!-- Parent Categories Select -->
-        <div>
+        <!-- parent categories -->
+        <div class="form-group">
             <label for="parent_category">Parent Categories:</label>
-            <select id="parent_category" name="parent_category">
+            <select id="parent_category" name="parent_category" class="form-control">
                 <option value="">Select Parent Category</option>
                 @foreach ($parentCategories as $category)
                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -49,33 +50,28 @@
             </select>
         </div>
 
-        <!-- Subcategories Select -->
-        <div>
+        <!-- subcategories -->
+        <div class="form-group">
             <label for="subcategories">Subcategories:</label>
-            <select id="subcategories" name="subcategories[]" multiple>
+            <select id="subcategories" name="subcategories[]" class="form-control" multiple>
                 <!-- Options will be dynamically loaded here -->
             </select>
         </div>
 
-        <button type="submit">Create Product</button>
+        <button type="submit" class="btn btn-primary">Create Product</button>
     </form>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Convert server-side subcategories to JavaScript object
+            // fetch subcategories
             const subcategories = @json($subCategories);
-
-            // Convert object to array
             const subcategoriesArray = Object.values(subcategories);
-
             const parentCategorySelect = document.getElementById('parent_category');
             const subcategorySelect = document.getElementById('subcategories');
 
             parentCategorySelect.addEventListener('change', function () {
                 const parentId = this.value;
-                // Clear previous options
                 subcategorySelect.innerHTML = '';
-
                 subcategoriesArray.forEach(function (subcategory) {
                     if (subcategory.parent_id == parentId || parentId === '') {
                         const option = document.createElement('option');
@@ -87,5 +83,5 @@
             });
         });
     </script>
-    </div>
+</div>
 @endsection

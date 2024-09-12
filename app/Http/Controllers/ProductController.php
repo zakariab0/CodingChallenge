@@ -10,7 +10,8 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('categories')->get(); // Eager load categories
+        //load products categories - eager load
+        $products = Product::with('categories')->get();
         return view('products.index', compact('products'));
         }
 

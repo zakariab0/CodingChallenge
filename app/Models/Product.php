@@ -10,6 +10,7 @@ class Product extends Model
     use HasFactory;
     protected $fillable = ['name', 'description', 'price', 'image'];
 
+    //function to store image
     public function setImageAttribute($value)
     {
         if (is_file($value)) {
@@ -17,6 +18,7 @@ class Product extends Model
         }
     }
 
+    //many to many
     public function categories()
 {
     return $this->belongsToMany(Category::class, 'category_product');
