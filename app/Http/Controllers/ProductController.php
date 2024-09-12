@@ -4,9 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Category;
 
 class ProductController extends Controller
 {
+    public function index()
+    {
+        $products = Product::with('categories')->get(); // Eager load categories
+        return view('products.index', compact('products'));
+        }
+
     public function store(Request $request)
 {
     $request->validate([
@@ -27,11 +34,24 @@ class ProductController extends Controller
 
     $product->save();
 
-    if ($request->has('categories')) {
-        $product->categories()->attach($request->categories);
+    if ($request->has('parent_category')) {
+        $product->categories()->attach($request->parent_category);
     }
 
-    return redirect()->route('products.index');
+    if ($request->has('subcategories')) {
+        $product->categories()->attach($request->subcategories);
+    }
+
+    return redirect()->route('products.index')->with('success', 'Product created successfully!');
 }
+
+    public function create()
+    {
+        $categories = Category::all();
+        $parentCategories = $categories->whereNull('parent_id');
+        $subCategories = $categories->whereNotNull('parent_id');
+
+        return view('products.create', compact('parentCategories', 'subCategories'));
+        }
 
 }
