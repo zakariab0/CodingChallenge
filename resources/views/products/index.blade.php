@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Product List</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}"> <!-- Link to your CSS file -->
-</head>
-<body>
+@extends('layout')
+
+@section('content')
+<div>
     <h1>Product List</h1>
     <table>
         <thead>
@@ -44,5 +41,5 @@
             @endforeach
         </tbody>
     </table>
-</body>
-</html>
+</div>
+@endsection

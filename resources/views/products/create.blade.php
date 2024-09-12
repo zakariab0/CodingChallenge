@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create Product</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}"> <!-- Link to your CSS file -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> <!-- Include jQuery -->
-</head>
-<body>
+@extends('layout')
+
+@section('content')
+<div>
     <h1>Create Product</h1>
 
     <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
@@ -87,5 +83,5 @@
             });
         });
     </script>
-</body>
-</html>
+</div>
+@endsection
