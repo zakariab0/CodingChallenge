@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProductRequest;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Repositories\ProductRepositoryInterface;
 use App\Repositories\CategoryRepositoryInterface;
@@ -37,21 +39,13 @@ class ProductController extends Controller
         return view('products.create', compact('parentCategories', 'subCategories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric',
-            'image' => 'nullable|image:jpeg,png,jpg|max:2048',
-            'parent_category' => 'nullable|exists:categories,id',
-            'subcategories' => 'nullable|array',
-            'subcategories.*' => 'exists:categories,id',
-        ]);
+        //validate
+        $validatedData = $request->validated();
 
-        $data = $request->only(['name', 'description', 'price', 'image', 'parent_category', 'subcategories']);
-        $this->productRepository->createProduct($data);
-
+        //create
+        Product::create($validatedData);
         return redirect()->route('products.index')->with('success', 'Product created successfully!');
     }
 }
