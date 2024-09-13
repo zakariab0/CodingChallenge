@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Repositories\CategoryRepositoryInterface;
 
 class CategoryController extends Controller
 {
-    //function that retrieves subcategories using parent category id
+    protected $categoryRepository;
+
+    public function __construct(CategoryRepositoryInterface $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+    }
+
     public function getSubcategories(Request $request)
     {
         $parentId = $request->input('parent_id');
-        $subcategories = Category::where('parent_id', $parentId)->get();
+        $subcategories = $this->categoryRepository->getSubcategoriesByParentId($parentId);
 
         return response()->json(['subcategories' => $subcategories]);
     }

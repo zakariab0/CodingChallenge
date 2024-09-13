@@ -3,58 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product;
-use App\Models\Category;
+use App\Repositories\ProductRepositoryInterface;
+use App\Repositories\CategoryRepositoryInterface;
 
 class ProductController extends Controller
 {
+    protected $productRepository;
+    protected $categoryRepository;
+
+    public function __construct(ProductRepositoryInterface $productRepository, CategoryRepositoryInterface $categoryRepository)
+    {
+        $this->productRepository = $productRepository;
+        $this->categoryRepository = $categoryRepository;
+    }
+
     public function index(Request $request)
     {
-        $query = Product::query();
+        $filters = $request->only(['parent_category_id', 'subcategory_id', 'price_min', 'price_max']);
+        $products = $this->productRepository->getAllProducts($filters);
 
-        // Filter by Parent Category and Subcategory
-        if ($request->filled('parent_category_id') && $request->filled('subcategory_id')) {
-            $query->whereHas('categories', function ($q) use ($request) {
-                $q->where('categories.id', $request->subcategory_id)
-                  ->where('categories.parent_id', $request->parent_category_id);
-            });
-        }
-        // Filter only by Parent Category
-        else if ($request->filled('parent_category_id')) {
-            $query->whereHas('categories', function ($q) use ($request) {
-                $q->where('categories.parent_id', $request->parent_category_id);
-            });
-        }
-        // Filter only by Subcategory
-        else if ($request->filled('subcategory_id')) {
-            $query->whereHas('categories', function ($q) use ($request) {
-                $q->where('categories.id', $request->subcategory_id);
-            });
-        }
-
-        // Filter by Minimum Price
-        if ($request->filled('price_min')) {
-            $query->where('price', '>=', $request->price_min);
-        }
-
-        // Filter by Maximum Price
-        if ($request->filled('price_max')) {
-            $query->where('price', '<=', $request->price_max);
-        }
-
-        $products = $query->get();
-        $categories = Category::all();
-        $parentCategories = $categories->whereNull('parent_id'); // get parent categories
-        $subCategories = $categories->whereNotNull('parent_id'); // get subcategories
+        $categories = $this->categoryRepository->getAllCategories();
+        $parentCategories = $this->categoryRepository->getParentCategories();
+        $subCategories = $this->categoryRepository->getSubCategories();
 
         return view('products.index', compact('products', 'categories', 'parentCategories', 'subCategories'));
     }
 
     public function create()
     {
-        $categories = Category::all();
-        $parentCategories = $categories->whereNull('parent_id');
-        $subCategories = $categories->whereNotNull('parent_id');
+        $parentCategories = $this->categoryRepository->getParentCategories();
+        $subCategories = $this->categoryRepository->getSubCategories();
 
         return view('products.create', compact('parentCategories', 'subCategories'));
     }
@@ -71,25 +49,9 @@ class ProductController extends Controller
             'subcategories.*' => 'exists:categories,id',
         ]);
 
-        $product = new Product();
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->setImageAttribute($request->image);
-
-
-        $product->save();
-
-        if ($request->filled('parent_category')) {
-            $product->categories()->attach($request->parent_category);
-        }
-
-        if ($request->filled('subcategories')) {
-            $product->categories()->attach($request->subcategories);
-        }
+        $data = $request->only(['name', 'description', 'price', 'image', 'parent_category', 'subcategories']);
+        $this->productRepository->createProduct($data);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully!');
     }
-
-
 }
