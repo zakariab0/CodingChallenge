@@ -31,7 +31,7 @@ class ProductCreation extends Command
     $price = $this->argument('price');
     $imagePath = $this->option('image');
     $parentCategoryId = $this->option('parent_category');
-    $subcategories = $this->option('subcategories');
+    $subcategories = $this->option('subcategories'); // This will be an array of IDs
 
     if ($imagePath && file_exists($imagePath)) {
         $mimeType = mime_content_type($imagePath);
@@ -76,12 +76,14 @@ class ProductCreation extends Command
         $product->categories()->attach($parentCategoryId);
     }
     if ($subcategories) {
+        // Ensure that subcategories is an array
         $product->categories()->attach($subcategories);
     }
 
     $this->info('Product created successfully!');
     return 0;
 }
+
 
 
 }
