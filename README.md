@@ -29,3 +29,10 @@ A simple full-stack application for managing products and categories built with 
     <ul>Run Tests:</ul>
         <li>Set .env.testing file for testing .env configuration and use same .env method to generate the key.</li>
         <li>Run php artisan test to execute the automated tests for the backend.</li>
+
+<h3>How to use CLI</h3>
+    <ul>I have created three commands for a better command managment:<ul>
+        <li><b>List parent categories IDs:</b> php artisan category:list-parents</li>
+        <li><b>List Sub categories IDs based on a parent Category:</b> php artisan category:list-subs 1</li>
+        <li><b>Create Product:</b>  78 php artisan product:create "{NAME}" "{DESCRIPTION}" {PRICE} --image="{IMAGE_PATH}" --parent_category={PARENT_CATEGORY_ID} --subcategories={PSUB_CATEGORY_ID} --subcategories={PSUB_CATEGORY_ID} </li>
+        
