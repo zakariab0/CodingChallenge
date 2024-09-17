@@ -23,7 +23,6 @@ class ProductController extends Controller
     {
         $filters = $request->only(['parent_category_id', 'subcategory_id', 'price_min', 'price_max']);
         $products = $this->productRepository->getAllProducts($filters);
-
         $categories = $this->categoryRepository->getAllCategories();
         $parentCategories = $this->categoryRepository->getParentCategories();
         $subCategories = $this->categoryRepository->getSubCategories();
@@ -45,7 +44,10 @@ class ProductController extends Controller
         $validatedData = $request->validated();
 
         //create
-        Product::create($validatedData);
+        $product = $this->productRepository->createProduct($validatedData);
+
+        //attach categories and sub categories
+        $this->categoryRepository->attachCategoriesToProduct($product, $validatedData);
         return redirect()->route('products.index')->with('success', 'Product created successfully!');
     }
 }

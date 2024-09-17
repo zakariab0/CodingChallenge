@@ -38,6 +38,8 @@ class ProductCreation extends Command
         $image = new UploadedFile($imagePath, basename($imagePath), $mimeType, null, true);
     } else {
         $image = null;
+        $this->error('Validation failed: failed to import image.');
+        return 1;
     }
 
     // Validate inputs
