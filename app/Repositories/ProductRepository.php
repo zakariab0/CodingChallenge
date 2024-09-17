@@ -11,8 +11,7 @@ class ProductRepository implements ProductRepositoryInterface
 
         if (isset($filters['parent_category_id']) || isset($filters['subcategory_id']))
             $query = app(CategoryRepository::class)
-                ->filterByCategory($query,
-                [$filters['subcategory_id'], $filters['parent_category_id']]);
+                ->filterByCategory($query, $filters);
 
         if (isset($filters['price_min'])) {
             $query->where('price', '>=', $filters['price_min']);
