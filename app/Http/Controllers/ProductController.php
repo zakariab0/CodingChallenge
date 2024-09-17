@@ -44,10 +44,18 @@ class ProductController extends Controller
         $validatedData = $request->validated();
 
         //create
+        $validatedData['image'] = $this->setImageAttribute($validatedData['image']);
         $product = $this->productRepository->createProduct($validatedData);
 
         //attach categories and sub categories
         $this->categoryRepository->attachCategoriesToProduct($product, $validatedData);
         return redirect()->route('products.index')->with('success', 'Product created successfully!');
     }
+
+    private function setImageAttribute($value)
+    {
+        if (is_file($value))
+            return $value->store('images', 'public');
+    }
+
 }

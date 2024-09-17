@@ -8,6 +8,7 @@ use Illuminate\Http\UploadedFile;
 use App\Repositories\ProductRepositoryInterface;
 use App\Repositories\CategoryRepositoryInterface;
 use App\Models\Product;
+use App\Http\Requests\StoreProductRequest;
 
 class ProductCreation extends Command
 {
@@ -43,22 +44,25 @@ class ProductCreation extends Command
     }
 
     // Validate inputs
-    $validator = Validator::make([
+    $data = [
         'name' => $name,
         'description' => $description,
         'price' => $price,
         'image' => $image,
         'parent_category' => $parentCategoryId,
         'subcategories' => $subcategories,
-    ], [
-        'name' => 'required|string|max:255',
-        'description' => 'required|string',
-        'price' => 'required|numeric',
-        'image' => 'nullable|image',
-        'parent_category' => 'nullable|exists:categories,id',
-        'subcategories' => 'nullable|array',
-        'subcategories.*' => 'exists:categories,id',
-    ]);
+    ];
+
+    //instanciate storeproductreq manually
+    $request = StoreProductRequest::create('/', 'POST', $data);
+
+    //validate data
+    $validator = Validator::make($data, $request->rules());
+
+    if ($validator->fails()) {
+        $this->error('Validation failed: ' . implode(', ', $validator->errors()->all()));
+        return 1;
+    }
 
     if ($validator->fails()) {
         $this->error('Validation failed: ' . implode(', ', $validator->errors()->all()));

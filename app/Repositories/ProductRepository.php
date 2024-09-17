@@ -28,9 +28,7 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $product = new Product();
         $product->fill($data);
-        $product->setImageAttribute($data['image']);
         $product->save();
-
         return $product;
     }
 }

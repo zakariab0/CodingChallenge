@@ -52,7 +52,7 @@
             @php
                 $productCategories = $product->categories;
                 $parentCategory = $productCategories->firstWhere('parent_id', null);
-                $subcategory = $productCategories->firstWhere('parent_id', '!=', null);
+                $subcategories = $productCategories->where('parent_id', '!=', null);
             @endphp
             <div class="col-md-4 mb-4">
                 <div class="card">
@@ -62,7 +62,14 @@
                         <p class="card-text">{{ $product->description }}</p>
                         <p class="card-text"><strong>Price:</strong> ${{ number_format($product->price, 2) }}</p>
                         <p class="card-text"><strong>Parent Category:</strong> {{ $parentCategory ? $parentCategory->name : 'None' }}</p>
-                        <p class="card-text"><strong>Subcategory:</strong> {{ $subcategory ? $subcategory->name : 'None' }}</p>
+                        <p class="card-text"><strong>Subcategories:</strong>
+                            @if($subcategories->isNotEmpty())
+                                @foreach($subcategories as $subcategory)
+                                    {{ $subcategory->name }}@if(!$loop->last), @endif
+                                @endforeach
+                            @else
+                                None
+                            @endif
                     </div>
                 </div>
             </div>
