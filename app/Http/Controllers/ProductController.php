@@ -43,7 +43,7 @@ class ProductController extends Controller
         //validate
         $validatedData = $request->validated();
 
-        //create
+        //save the image in images/public then store the product
         $validatedData['image'] = $this->setImageAttribute($validatedData['image']);
         $product = $this->productRepository->createProduct($validatedData);
 

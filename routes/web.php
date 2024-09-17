@@ -16,7 +16,7 @@ use App\Http\Controllers\CategoryController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/products');
 });
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');

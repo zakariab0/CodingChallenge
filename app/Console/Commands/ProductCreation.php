@@ -64,11 +64,6 @@ class ProductCreation extends Command
         return 1;
     }
 
-    if ($validator->fails()) {
-        $this->error('Validation failed: ' . implode(', ', $validator->errors()->all()));
-        return 1;
-    }
-
     // Create Product
     $product = new Product();
     $product->name = $name;
