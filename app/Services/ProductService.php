@@ -25,6 +25,15 @@ class ProductService
         // Create the product using the repository
         $product = $this->productRepository->createProduct($data);
 
+        if (isset($data['parent_category'])) {
+            $product->categories()->attach($data['parent_category']);
+        }
+
+        // Attach subcategories if provided
+        if (isset($data['subcategories']) && is_array($data['subcategories'])) {
+            $product->categories()->attach($data['subcategories']);
+        }
+
         return ['success' => 'Product created successfully!', 'product' => $product];
     }
 
