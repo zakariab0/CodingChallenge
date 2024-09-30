@@ -53,11 +53,4 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', $result['success']);
     }
-
-    private function setImageAttribute($value)
-    {
-        if (is_file($value))
-            return $value->store('images', 'public');
-    }
-
 }
