@@ -3,65 +3,52 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\UploadedFile;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Controllers\ProductController;
+use App\Services\ProductService;
 
 class ProductCreation extends Command
 {
     protected $signature = 'product:create {name} {description} {price} {--image=} {--parent_category=} {--subcategories=*}';
     protected $description = 'Create a new product from the command line';
 
-    protected $productController;
+    protected $productService;
 
-    public function __construct(ProductController $productController)
+    public function __construct(ProductService $productService)
     {
         parent::__construct();
-        $this->productController = $productController;
+        $this->productService = $productService;
     }
 
     public function handle()
     {
-        $name = $this->argument('name');
-        $description = $this->argument('description');
-        $price = $this->argument('price');
-        $imagePath = $this->option('image');
-        $parentCategoryId = $this->option('parent_category');
-        $subcategories = $this->option('subcategories'); // This will be an array of IDs
+        $data = [
+            'name' => $this->argument('name'),
+            'description' => $this->argument('description'),
+            'price' => $this->argument('price'),
+            'image' => $this->getImageFromFile($this->option('image')), // Handle the file upload
+            'parent_category' => $this->option('parent_category'),
+            'subcategories' => $this->option('subcategories'),
+        ];
 
-        if ($imagePath && file_exists($imagePath)) {
-            $mimeType = mime_content_type($imagePath);
-            $image = new UploadedFile($imagePath, basename($imagePath), $mimeType, null, true);
-        } else {
-            $image = null;
-            $this->error('Validation failed: failed to import image.');
+        $result = $this->productService->createProduct($data);
+
+        if (isset($result['error'])) {
+            $this->error($result['error']);
             return 1;
         }
 
-        // Prepare data
-        $data = [
-            'name' => $name,
-            'description' => $description,
-            'price' => $price,
-            'image' => $image,
-            'parent_category_id' => $parentCategoryId,
-            'subcategory_id' => $subcategories, // Ensure this is correct in the request rules
-        ];
-
-        // Instantiate StoreProductRequest manually
-        $request = StoreProductRequest::create('/', 'POST', $data);
-
-        // Call the controller's store method to handle the creation
-        $response = $this->productController->store($request);
-
-        // Check if the product was successfully created
-        if ($response->getStatusCode() === 302) { // 302 for redirect
-            $this->info('Product created successfully!');
-        } else {
-            $this->error('Failed to create product.');
-        }
-
+        $this->info($result['success']);
         return 0;
     }
-}
+
+    private function getImageFromFile($imagePath)
+    {
+        if ($imagePath && file_exists($imagePath)) {
+            $mimeType = mime_content_type($imagePath);
+            return new UploadedFile($imagePath, basename($imagePath), $mimeType, null, true);
+        }
+
+        $this->error('Invalid image file');
+        return null;
+    }
+    }

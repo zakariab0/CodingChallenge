@@ -7,16 +7,20 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Repositories\ProductRepositoryInterface;
 use App\Repositories\CategoryRepositoryInterface;
+use App\Services\ProductService;
 
 class ProductController extends Controller
 {
     protected $productRepository;
     protected $categoryRepository;
+    protected $productService;
 
-    public function __construct(ProductRepositoryInterface $productRepository, CategoryRepositoryInterface $categoryRepository)
+    public function __construct(ProductRepositoryInterface $productRepository, CategoryRepositoryInterface $categoryRepository, ProductService $productService)
     {
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
+        $this->productService = $productService;
+
     }
 
     public function index(Request $request)
@@ -40,16 +44,14 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        //validate
         $validatedData = $request->validated();
+        $result = $this->productService->createProduct($validatedData);
 
-        //save the image in images/public then store the product
-        $validatedData['image'] = $this->setImageAttribute($validatedData['image']);
-        $product = $this->productRepository->createProduct($validatedData);
+        if (isset($result['error'])) {
+            return redirect()->back()->withErrors($result['error']);
+        }
 
-        //attach categories and sub categories
-        $this->categoryRepository->attachCategoriesToProduct($product, $validatedData);
-        return redirect()->route('products.index')->with('success', 'Product created successfully!');
+        return redirect()->route('products.index')->with('success', $result['success']);
     }
 
     private function setImageAttribute($value)
