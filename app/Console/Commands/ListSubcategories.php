@@ -19,6 +19,7 @@ class ListSubcategories extends Command
     {
         $parentId = $this->argument('parentId');
 
+        //fetch subcategories by checking categories with not null parent_id and get them aswell
         $subcategories = Category::where('parent_id', $parentId)->get();
 
         if ($subcategories->isEmpty()) {

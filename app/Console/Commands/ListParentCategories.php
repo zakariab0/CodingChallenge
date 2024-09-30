@@ -16,6 +16,7 @@ class ListParentCategories extends Command
 
     public function handle()
     {
+        //fetch parent categories by checking categories with null parent_id
         $parentCategories = Category::whereNull('parent_id')->get();
 
         if ($parentCategories->isEmpty()) {
@@ -24,6 +25,8 @@ class ListParentCategories extends Command
         }
 
         $this->info('Parent Categories:');
+
+        //list all entities in a table then send it to the view page
         $this->table(['ID', 'Name'], $parentCategories->map(function ($category) {
             return [$category->id, $category->name];
         }));

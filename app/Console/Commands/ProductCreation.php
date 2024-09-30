@@ -15,7 +15,6 @@ class ProductCreation extends Command
 
     public function __construct(ProductService $productService)
     {
-        parent::__construct();
         $this->productService = $productService;
     }
 
@@ -51,4 +50,4 @@ class ProductCreation extends Command
         $this->error('Invalid image file');
         return null;
     }
-    }
+}
