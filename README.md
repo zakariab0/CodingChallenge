@@ -1,4 +1,4 @@
-<h2>Coding Challenge: Product Management Application<h2>
+<h2>OCP Technical Test: Product Management Application<h2>
 A simple full-stack application for managing products and categories built with Laravel and Bootstrap.
 
 <h3>Features</h3>
